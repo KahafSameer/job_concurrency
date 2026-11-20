@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GitHub Actions Job Concurrency
 
-## Getting Started
+A starter Next.js app used to demonstrate **job concurrency in GitHub Actions**: a newer push cancels a deployment that's still running.
 
-First, run the development server:
+## Workflow (`.github/workflows/main.yml`)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+"Deploy Next JS App" runs on every push to `main`. The job uses:
+
+```yaml
+concurrency:
+  group: deploy
+  cancel-in-progress: true
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Only one run in the `deploy` group runs at a time. When a new push arrives, the run already in progress is cancelled.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Steps: checkout → `npm install` → `npm run build` → a placeholder deploy step (`echo "Deploying APP"`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+More notes: [GitHub-Actions-Documentation.md](GitHub-Actions-Documentation.md) and the `/notes` page in the app (`app/notes/page.tsx`).
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+Next.js · React · TypeScript · Tailwind CSS · GitHub Actions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Run locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git clone https://github.com/KahafSameer/job_concurrency.git
+cd job_concurrency
+npm install
+npm run dev     # http://localhost:3000
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+|---|---|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
